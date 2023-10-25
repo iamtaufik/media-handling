@@ -5,6 +5,7 @@ const port = process.env.PORT || 3000;
 
 const mediaRouter = require('./routes/media.routes');
 
+app.use(express.json());
 app.use(express.static('public'));
 app.use('/api/v1', mediaRouter);
 

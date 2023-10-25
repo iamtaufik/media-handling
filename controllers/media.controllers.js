@@ -1,4 +1,5 @@
 const imagekit = require('../libs/imagekit');
+const qr = require('qr-image');
 
 module.exports = {
   imageUpload: async (req, res) => {
@@ -54,6 +55,35 @@ module.exports = {
         file,
         fileName: req.file.originalname,
         folder: '/uploads',
+      });
+
+      res.status(201).json({
+        status: true,
+        message: 'Ok',
+        data: {
+          image: result.url,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  generateQRcode: async (req, res, next) => {
+    try {
+      const { qr_data } = req.body;
+      if (!qr_data) {
+        return res.status(400).json({
+          status: false,
+          message: 'QR data is required',
+        });
+      }
+      const qr_png = qr.imageSync(qr_data, { type: 'png' });
+      const qr_base64 = qr_png.toString('base64');
+
+      const result = await imagekit.upload({
+        file: qr_base64,
+        fileName: Date.now() + '.png',
+        folder: '/qrcodes',
       });
 
       res.status(201).json({
