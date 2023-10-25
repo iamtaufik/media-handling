@@ -1,3 +1,5 @@
+const imagekit = require('../libs/imagekit');
+
 module.exports = {
   imageUpload: async (req, res) => {
     const imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
@@ -42,5 +44,27 @@ module.exports = {
         images,
       },
     });
+  },
+
+  imageKit: async (req, res, next) => {
+    try {
+      const file = req.file.buffer.toString('base64');
+
+      const result = await imagekit.upload({
+        file,
+        fileName: req.file.originalname,
+        folder: '/images',
+      });
+
+      res.status(201).json({
+        status: true,
+        message: 'Ok',
+        data: {
+          image: result.url,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   },
 };
