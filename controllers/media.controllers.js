@@ -53,7 +53,7 @@ module.exports = {
       const result = await imagekit.upload({
         file,
         fileName: req.file.originalname,
-        folder: '/images',
+        folder: '/uploads',
       });
 
       res.status(201).json({
